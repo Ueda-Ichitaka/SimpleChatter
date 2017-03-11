@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <ListView
+        android:id="@+id/list_chats"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:paddingLeft="15px"
+        android:paddingTop="15px"
+        tools:listitem="@layout/layout_chat_selector"/>
+</RelativeLayout>

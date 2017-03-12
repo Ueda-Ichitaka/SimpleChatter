@@ -2,10 +2,12 @@ package com.richardrudolph.simplechatter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,11 +19,11 @@ import java.util.ArrayList;
 public class ChatsListAdapter extends BaseAdapter
 {
     private static LayoutInflater inflater = null;
-    ArrayList<String> chatsList;
+    ArrayList<ChatsListItem> chatsList;
 
-    public ChatsListAdapter(Activity activity, ArrayList<String> list)
+    public ChatsListAdapter(Activity activity, ArrayList<ChatsListItem> list)
     {
-        chatsList = list;
+        this.chatsList = list;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -32,9 +34,9 @@ public class ChatsListAdapter extends BaseAdapter
     }
 
     @Override
-    public Object getItem(int position)
+    public ChatsListItem getItem(int position)
     {
-        return position;
+        return chatsList.get(position);
     }
 
     @Override
@@ -46,7 +48,7 @@ public class ChatsListAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        String chatTitle = (String) chatsList.get(position);
+        ChatsListItem chat = (ChatsListItem) chatsList.get(position);
         View view = convertView;
         if (convertView == null)
         {
@@ -54,12 +56,17 @@ public class ChatsListAdapter extends BaseAdapter
         }
 
         TextView title = (TextView) view.findViewById(R.id.chat_name);
-        title.setText(chatTitle);
+        title.setText(chat.getChatName());
+        ImageView thumb = (ImageView) view.findViewById(R.id.chat_image);
+        if (chat.getThumb() != null)
+        {
+            thumb.setBackground((Drawable) chat.getThumb());
+        }
 
         return view;
     }
 
-    public void add(String object)
+    public void add(ChatsListItem object)
     {
         chatsList.add(object);
     }

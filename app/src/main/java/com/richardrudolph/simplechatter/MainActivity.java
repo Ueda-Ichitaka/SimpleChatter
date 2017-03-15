@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -140,6 +139,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                 {
+                    //TODO put chat id in bundle
                     Intent chat = new Intent(getActivity(), ChatActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("receiver", chatsListAdapter.getItem(position).getChatName());
@@ -148,9 +148,15 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
+            //TODO replace with load routine. check db table table_chats (chat_id:contact_id)
+            // create new items with data in table table_contacts
+            //for(entries in table table_chats)
+            //chatsListAdapter.add(new ChatsListItem(table_contacts.contact_name(table_chats
+            // .contact_id([chat_id])), table_contacts.contact_id.contact_thumb, chat_id));
+
             chatsListAdapter.add(new ChatsListItem("Test 1", null, 0));
-            chatsListAdapter.add(new ChatsListItem("Test 2", null, 0));
-            chatsListAdapter.add(new ChatsListItem("Test 3", null, 0));
+            chatsListAdapter.add(new ChatsListItem("Test 2", null, 1));
+            chatsListAdapter.add(new ChatsListItem("Test 3", null, 2));
             chatsListAdapter.notifyDataSetChanged();
 
 
@@ -168,6 +174,8 @@ public class MainActivity extends AppCompatActivity
          * fragment.
          */
 
+        //private SimpleChatterDataWorker dataWorker;
+
         public PlaceholderContactsFragment()
         {
         }
@@ -184,11 +192,49 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+                savedInstanceState)
         {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText("Contacts list goes here");
+            View rootView = inflater.inflate(R.layout.fragment_contacts, container, false);
+
+            ListView contactsListView = (ListView) rootView.findViewById(R.id.list_contacts);
+            ArrayList<ContactsListItem> contactsList = new ArrayList<ContactsListItem>();
+            final ContactsListAdapter contactsListAdapter = new ContactsListAdapter(getActivity()
+                    , contactsList);
+            contactsListView.setAdapter(contactsListAdapter);
+
+            contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+            {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                {
+                    //TODO put chat id in bundle
+                    Intent contact = new Intent(getActivity(), ChatActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("receiver", contactsListAdapter.getItem(position)
+                            .getContactName());
+                    contact.putExtras(bundle);
+                    startActivity(contact);
+                }
+            });
+
+            //TODO load contacts from db
+            //TODO add entry in db table_chats with contact_id from table_contacts if not exist
+
+            SimpleChatterDataWorker dataWorker = new SimpleChatterDataWorker(getContext());
+            //dataWorker.testData();
+
+            ArrayList<ContactsListItem> dbContactsList = dataWorker.getContactList();
+            for (ContactsListItem item : dbContactsList)
+            {
+                contactsListAdapter.add(item);
+            }
+
+            //contactsListAdapter.add(new ContactsListItem("Test 4", null, 0));
+            //contactsListAdapter.add(new ContactsListItem("Test 5", null, 1));
+            //contactsListAdapter.add(new ContactsListItem("Test 6", null, 2));
+            contactsListAdapter.notifyDataSetChanged();
+
             return rootView;
         }
     }

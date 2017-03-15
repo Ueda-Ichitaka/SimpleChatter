@@ -50,6 +50,12 @@ public class ChatActivityFragment extends Fragment implements OnClickListener
         messageListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         messageListView.setStackFromBottom(true);
 
+        //TODO load messages from db table_chat_[bundle_id] if exist
+        //if table_chat_[id] exists
+        //for entries in table_chat_id do
+        //new chatmessage(table_chat_id.message, table_contacts.contact_name(table_chat_id
+        // .sender_id)....
+
         return rootView;
     }
 
@@ -62,6 +68,9 @@ public class ChatActivityFragment extends Fragment implements OnClickListener
             messageEntry.setText("");
             chatMessageAdapter.add(chatMessage);
             chatMessageAdapter.notifyDataSetChanged();
+            //TODO save messages to db
+            //TODO if first message in chat, add entry to chats table (create new chat on chats
+            // list)
         }
     }
 

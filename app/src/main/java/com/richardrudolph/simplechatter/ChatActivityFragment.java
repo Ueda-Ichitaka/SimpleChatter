@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,7 +29,7 @@ public class ChatActivityFragment extends Fragment implements OnClickListener
     private DateFormat date = new SimpleDateFormat("d MM yyyy");
     private DateFormat time = new SimpleDateFormat("HH:mm:ss");
     private ChatMessageAdapter chatMessageAdapter;
-    SimpleChatterDataWorker dataWorker = new SimpleChatterDataWorker(getContext());
+    SimpleChatterDataWorker dataWorker;
 
     public ChatActivityFragment()
     {
@@ -37,6 +38,8 @@ public class ChatActivityFragment extends Fragment implements OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        dataWorker = new SimpleChatterDataWorker(getContext());
+
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
 
@@ -90,6 +93,8 @@ public class ChatActivityFragment extends Fragment implements OnClickListener
                 .getInstance().getTime()));
             messageValues.put(SimpleChatterContract.Chat.COLUMN_TIME, time.format(Calendar
                 .getInstance().getTime()));
+            Log.v("chat table on data put", "chat table: " + getActivity().getIntent().getExtras
+                ().getString("chatTable"));
             dataWorker.writeData(getActivity().getIntent().getExtras().getString("chatTable"), messageValues);
         }
     }

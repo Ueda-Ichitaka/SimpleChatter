@@ -27,5 +27,10 @@
         android:orderInCategory="400"
         android:title="Create Demo Contacts"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_copy_database"
+        android:orderInCategory="500"
+        android:title="Copy Database to public area"
+        app:showAsAction="never"/>
 
 </menu>

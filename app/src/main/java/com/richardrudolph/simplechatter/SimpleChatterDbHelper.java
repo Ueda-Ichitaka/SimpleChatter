@@ -62,7 +62,7 @@ public class SimpleChatterDbHelper extends SQLiteOpenHelper
 
     public void createChatTable(int id)
     {
-        final String SQL_CREATE_CHAT_TABLE = "CREATE TABLE IF NOT EXIST " + SimpleChatterContract
+        final String SQL_CREATE_CHAT_TABLE = "CREATE TABLE IF NOT EXISTS " + SimpleChatterContract
             .Chat.TABLE_NAME + Integer.toString(id) + " (" + SimpleChatterContract.Chat._ID + " "
             + "INTEGER NOT" + " NULL PRIMARY KEY " + "UNIQUE," + SimpleChatterContract.Chat
             .COLUMN_MESSAGE_TEXT + " TEXT NOT NULL," + SimpleChatterContract.Chat

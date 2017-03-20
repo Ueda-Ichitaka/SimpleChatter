@@ -3,7 +3,9 @@ package com.richardrudolph.simplechatter;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -122,6 +124,31 @@ public class SimpleChatterDataWorker
         return messages;
     }
 
+    public void checkChatEntryExists(int contactId)
+    {
+        database = dbHelper.getReadableDatabase();
+
+        Cursor cursor = null;
+        String sql = "SELECT table_chat FROM table_chats WHERE contact_id = " + contactId;
+        cursor = database.rawQuery(sql, null);
+
+
+        if (cursor.getCount() > 0)
+        {
+            //got an entry
+        } else
+        {
+            int index = (int) (DatabaseUtils.queryNumEntries(database, "table_chats") + 1);
+            ContentValues chatValues = new ContentValues();
+            chatValues.put(SimpleChatterContract.Chats.COLUMN_CONTACT, contactId);
+            chatValues.put(SimpleChatterContract.Chats.COLUMN_TABLE, "table_chat_" + index);
+            writeData(SimpleChatterContract.Chats.TABLE_NAME, chatValues);
+
+            createChatTable(index);
+        }
+        cursor.close();
+    }
+
     public String getChatTable(int contactId)
     {
         database = dbHelper.getReadableDatabase();
@@ -134,8 +161,15 @@ public class SimpleChatterDataWorker
 
         Cursor cursor = database.query(SimpleChatterContract.Chats.TABLE_NAME, projection,
             selection, selectionArgs, null, null, null);
+        Log.v("Cursor count", "Cursor count: " + cursor.getCount());
 
-        return cursor.getString(cursor.getColumnIndexOrThrow(SimpleChatterContract.Chats.COLUMN_TABLE));
+        cursor.moveToNext();
+        String retVal = cursor.getString(cursor.getColumnIndexOrThrow(SimpleChatterContract.Chats
+            .COLUMN_TABLE));
+        Log.v("chat table", "chat table name got by contact id: " + retVal);
+        cursor.close();
+
+        return retVal;
     }
 
 

@@ -212,6 +212,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     //TODO check if entry exists in chats table with contact_id ==
                     // contactslistitem.id
+                    dataWorker.checkChatEntryExists(contactsListAdapter.getItem(position).getId());
                     //TODO if entry not exist create entry and create chat table
 
                     //TODO put table_chat in bundle

@@ -3,8 +3,29 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.richardrudolph.simplechatter.MainActivity">
     <item
+        android:id="@+id/action_add_contact"
+        android:orderInCategory="000"
+        android:title="Add Contact"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_clear_chats"
+        android:orderInCategory="200"
+        android:title="Clear Chats"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_clear_db"
+        android:orderInCategory="300"
+        android:title="Clear DB"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_create_contacts"
+        android:orderInCategory="400"
+        android:title="Create Demo Contacts"
+        app:showAsAction="never"/>
+
 </menu>

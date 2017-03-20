@@ -7,31 +7,33 @@ package com.richardrudolph.simplechatter;
 public class ChatMessage
 {
     private String message;  //message text
-    private String sender;  //sender account - mail
-    private String receiver;  //receiver account - mail
+    private int senderId;  //senderId account - mail
+    private int receiverId;  //receiverId account - mail
     private int id;
     private String date;
     private String time;
 
-    public ChatMessage(String message, String sender, String receiver, int id, String date, String time)
+    public ChatMessage(String message, int senderId, int receiverId, int id, String date, String
+        time)
     {
 
         this.message = message;
-        this.sender = sender;
-        this.receiver = receiver;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
         this.id = id;
         this.date = date;
         this.time = time;
     }
 
-    public boolean isMine(String account)
+    /*
+    public boolean isMine(int account)
     {
-        if (this.sender.equals(account))
+        if (this.senderId.equals(account))
         {
             return true;
         }
         return false;
-    }
+    } */
 
     public String getMessage()
     {
@@ -43,24 +45,24 @@ public class ChatMessage
         this.message = message;
     }
 
-    public String getSender()
+    public int getSenderId()
     {
-        return sender;
+        return senderId;
     }
 
-    public void setSender(String sender)
+    public void setSenderId(int senderId)
     {
-        this.sender = sender;
+        this.senderId = senderId;
     }
 
-    public String getReceiver()
+    public int getReceiverId()
     {
-        return receiver;
+        return receiverId;
     }
 
-    public void setReceiver(String receiver)
+    public void setReceiverId(int receiverId)
     {
-        this.receiver = receiver;
+        this.receiverId = receiverId;
     }
 
     public int getId()

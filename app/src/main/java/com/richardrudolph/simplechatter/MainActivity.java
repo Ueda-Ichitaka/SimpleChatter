@@ -203,16 +203,25 @@ public class MainActivity extends AppCompatActivity
                     , contactsList);
             contactsListView.setAdapter(contactsListAdapter);
 
+            final SimpleChatterDataWorker dataWorker = new SimpleChatterDataWorker(getContext());
+
             contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
             {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                 {
-                    //TODO put chat id in bundle
+                    //TODO check if entry exists in chats table with contact_id ==
+                    // contactslistitem.id
+                    //TODO if entry not exist create entry and create chat table
+
+                    //TODO put table_chat in bundle
                     Intent contact = new Intent(getActivity(), ChatActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString("receiver", contactsListAdapter.getItem(position)
+                    bundle.putString("chatTable", dataWorker.getChatTable(contactsListAdapter
+                        .getItem(position).getId()));
+                    bundle.putString("receiverName", contactsListAdapter.getItem(position)
                             .getContactName());
+                    bundle.putInt("receiverId", contactsListAdapter.getItem(position).getId());
                     contact.putExtras(bundle);
                     startActivity(contact);
                 }
@@ -221,7 +230,7 @@ public class MainActivity extends AppCompatActivity
             //TODO load contacts from db
             //TODO add entry in db table_chats with contact_id from table_contacts if not exist
 
-            SimpleChatterDataWorker dataWorker = new SimpleChatterDataWorker(getContext());
+
             //dataWorker.testData();
 
             ArrayList<ContactsListItem> dbContactsList = dataWorker.getContactList();

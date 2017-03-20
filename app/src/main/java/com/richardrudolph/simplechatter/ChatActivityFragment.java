@@ -1,5 +1,6 @@
 package com.richardrudolph.simplechatter;
 
+import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -27,6 +28,7 @@ public class ChatActivityFragment extends Fragment implements OnClickListener
     private DateFormat date = new SimpleDateFormat("d MM yyyy");
     private DateFormat time = new SimpleDateFormat("HH:mm:ss");
     private ChatMessageAdapter chatMessageAdapter;
+    SimpleChatterDataWorker dataWorker = new SimpleChatterDataWorker(getContext());
 
     public ChatActivityFragment()
     {
@@ -50,11 +52,19 @@ public class ChatActivityFragment extends Fragment implements OnClickListener
         messageListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         messageListView.setStackFromBottom(true);
 
-        //TODO load messages from db table_chat_[bundle_id] if exist
+        //TODO load messages from db table_chat_[bundle_id]
         //if table_chat_[id] exists
         //for entries in table_chat_id do
         //new chatmessage(table_chat_id.message, table_contacts.contact_name(table_chat_id
         // .sender_id)....
+
+        ArrayList<ChatMessage> dbMessageList = dataWorker.getMessageList(getActivity().getIntent
+            ().getExtras().getString("chatTable"));
+        for (ChatMessage item : dbMessageList)
+        {
+            chatMessageAdapter.add(item);
+        }
+        chatMessageAdapter.notifyDataSetChanged();
 
         return rootView;
     }
@@ -64,13 +74,23 @@ public class ChatActivityFragment extends Fragment implements OnClickListener
         String message = messageEntry.getEditableText().toString();
         if (!message.equalsIgnoreCase(""))
         {
-            final ChatMessage chatMessage = new ChatMessage(message, prefs.getString("pref_account_name", "Anonymous"), getActivity().getIntent().getExtras().getString("receiver"), chatMessageAdapter.getCount(), date.format(Calendar.getInstance().getTime()), time.format(Calendar.getInstance().getTime()));
+            final ChatMessage chatMessage = new ChatMessage(message, 0, getActivity().getIntent()
+                .getExtras().getInt("receiverId"), chatMessageAdapter.getCount(), date.format
+                (Calendar.getInstance().getTime()), time.format(Calendar.getInstance().getTime()));
             messageEntry.setText("");
             chatMessageAdapter.add(chatMessage);
             chatMessageAdapter.notifyDataSetChanged();
             //TODO save messages to db
-            //TODO if first message in chat, add entry to chats table (create new chat on chats
-            // list)
+            ContentValues messageValues = new ContentValues();
+            messageValues.put(SimpleChatterContract.Chat.COLUMN_MESSAGE_TEXT, message);
+            messageValues.put(SimpleChatterContract.Chat.COLUMN_SENDER_ID, 0);
+            messageValues.put(SimpleChatterContract.Chat.COLUMN_RECEIVER_ID, getActivity()
+                .getIntent().getExtras().getInt("receiverId"));
+            messageValues.put(SimpleChatterContract.Chat.COLUMN_DATE, date.format(Calendar
+                .getInstance().getTime()));
+            messageValues.put(SimpleChatterContract.Chat.COLUMN_TIME, time.format(Calendar
+                .getInstance().getTime()));
+            dataWorker.writeData(getActivity().getIntent().getExtras().getString("chatTable"), messageValues);
         }
     }
 

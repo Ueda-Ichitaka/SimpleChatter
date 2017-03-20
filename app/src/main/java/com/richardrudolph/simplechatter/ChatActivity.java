@@ -27,7 +27,7 @@ public class ChatActivity extends AppCompatActivity
             setTheme(R.style.AppTheme_Dark_NoActionBar);
         }
 
-        setTitle(getIntent().getExtras().getString("receiver"));
+        setTitle(getIntent().getExtras().getString("receiverName"));
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);

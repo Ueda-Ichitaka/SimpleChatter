@@ -60,7 +60,6 @@ public class SimpleChatterDbHelper extends SQLiteOpenHelper
         onUpgrade(db, oldVersion, newVersion);
     }
 
-
     public void createChatTable(int id)
     {
         final String SQL_CREATE_CHAT_TABLE = "CREATE TABLE IF NOT EXIST " + SimpleChatterContract
@@ -74,4 +73,6 @@ public class SimpleChatterDbHelper extends SQLiteOpenHelper
 
         getWritableDatabase().execSQL(SQL_CREATE_CHAT_TABLE);
     }
+
+
 }

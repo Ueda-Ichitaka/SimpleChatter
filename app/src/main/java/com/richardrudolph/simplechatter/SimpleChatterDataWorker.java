@@ -68,11 +68,77 @@ public class SimpleChatterDataWorker
         return contacts;
     }
 
-    public void clearDB()
+    /*
+    public ArrayList<ChatsListItem> getChatsList()
     {
-        database = dbHelper.getWritableDatabase();
-        database.execSQL("delete * from " + SimpleChatterContract.Contact.TABLE_NAME);
+        database = dbHelper.getReadableDatabase();
+
+        String[] projection = {SimpleChatterContract.Chats._ID, SimpleChatterContract.Chats
+        .COLUMN_CONTACT,
+            SimpleChatterContract.Chats.COLUMN_TABLE};
+
+        Cursor cursor = database.query(SimpleChatterContract.Chats.TABLE_NAME, projection,
+            null, null, null, null, null);
+
+        ArrayList<ChatsListItem> chats = new ArrayList<ChatsListItem>();
+        while (cursor.moveToNext())
+        {
+            ChatsListItem item = new ChatsListItem(cursor.getString(cursor
+                .getColumnIndexOrThrow(SimpleChatterContract.Chats.)), null, cursor
+                .getInt(cursor.getColumnIndexOrThrow(SimpleChatterContract.Contact._ID)));
+            chats.add(item);
+        }
+        cursor.close();
+
+        return chats;
+    } */
+
+    public ArrayList<ChatMessage> getMessageList(String tableName)
+    {
+        database = dbHelper.getReadableDatabase();
+
+        String[] projection = {SimpleChatterContract.Chat._ID, SimpleChatterContract.Chat
+            .COLUMN_MESSAGE_TEXT, SimpleChatterContract.Chat.COLUMN_SENDER_ID,
+            SimpleChatterContract.Chat.COLUMN_RECEIVER_ID, SimpleChatterContract.Chat
+            .COLUMN_DATE, SimpleChatterContract.Chat.COLUMN_TIME};
+
+        Cursor cursor = database.query(tableName, projection, null, null, null, null, null);
+
+        ArrayList<ChatMessage> messages = new ArrayList<ChatMessage>();
+        while (cursor.moveToNext())
+        {
+            ChatMessage item = new ChatMessage(cursor.getString(cursor.getColumnIndexOrThrow
+                (SimpleChatterContract.Chat.COLUMN_MESSAGE_TEXT)), cursor.getInt(cursor
+                .getColumnIndexOrThrow(SimpleChatterContract.Chat.COLUMN_SENDER_ID)), cursor
+                .getInt(cursor.getColumnIndexOrThrow(SimpleChatterContract.Chat
+                    .COLUMN_RECEIVER_ID)), cursor.getInt(cursor.getColumnIndexOrThrow
+                (SimpleChatterContract.Chat._ID)), cursor.getString(cursor.getColumnIndexOrThrow
+                (SimpleChatterContract.Chat.COLUMN_DATE)), cursor.getString(cursor
+                .getColumnIndexOrThrow(SimpleChatterContract.Chat.COLUMN_TIME)));
+            messages.add(item);
+        }
+        cursor.close();
+
+        return messages;
     }
+
+    public String getChatTable(int contactId)
+    {
+        database = dbHelper.getReadableDatabase();
+
+        String[] projection = {SimpleChatterContract.Chats._ID, SimpleChatterContract.Chats
+            .COLUMN_CONTACT, SimpleChatterContract.Chats.COLUMN_TABLE};
+
+        String selection = SimpleChatterContract.Chats.COLUMN_CONTACT + " = ?";
+        String[] selectionArgs = {Integer.toString(contactId)};
+
+        Cursor cursor = database.query(SimpleChatterContract.Chats.TABLE_NAME, projection,
+            selection, selectionArgs, null, null, null);
+
+        return cursor.getString(cursor.getColumnIndexOrThrow(SimpleChatterContract.Chats.COLUMN_TABLE));
+    }
+
+
 
     public void createChatTable(int chatID)
     {

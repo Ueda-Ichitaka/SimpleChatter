@@ -13,24 +13,19 @@
         android:title="@string/action_settings"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/action_clear_chats"
-        android:orderInCategory="200"
-        android:title="Clear Chats"
-        app:showAsAction="never"/>
-    <item
         android:id="@+id/action_clear_db"
+        android:orderInCategory="200"
+        android:title="clear db"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_clear_chats"
         android:orderInCategory="300"
-        android:title="Clear DB"
+        android:title="clear chats"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/action_create_contacts"
+        android:id="@+id/action_add_demo_contacts"
         android:orderInCategory="400"
-        android:title="Create Demo Contacts"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_copy_database"
-        android:orderInCategory="500"
-        android:title="Copy Database to public area"
+        android:title="insert demo contacts"
         app:showAsAction="never"/>
 
 </menu>

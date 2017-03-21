@@ -31,7 +31,6 @@ public class SimpleChatterDbHelper extends SQLiteOpenHelper
 
     public SimpleChatterDbHelper(Context context)
     {
-
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         //context.deleteDatabase("simpleChatter.db");
         //context.deleteDatabase("SimpleChatter.db");
@@ -74,5 +73,12 @@ public class SimpleChatterDbHelper extends SQLiteOpenHelper
         getWritableDatabase().execSQL(SQL_CREATE_CHAT_TABLE);
     }
 
+    public void resetDb(Context context)
+    {
+        context.deleteDatabase("SimpleChatter.db");
+        //getWritableDatabase().execSQL(SQL_CREATE_CONTACT_TABLE);
+        //getWritableDatabase().execSQL(SQL_CREATE_CHATS_TABLE);
+    }
 
+    //public void clearChats
 }

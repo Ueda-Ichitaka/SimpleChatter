@@ -55,12 +55,6 @@ public class ChatActivityFragment extends Fragment implements OnClickListener
         messageListView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         messageListView.setStackFromBottom(true);
 
-        //TODO load messages from db table_chat_[bundle_id]
-        //if table_chat_[id] exists
-        //for entries in table_chat_id do
-        //new chatmessage(table_chat_id.message, table_contacts.contact_name(table_chat_id
-        // .sender_id)....
-
         ArrayList<ChatMessage> dbMessageList = dataWorker.getMessageList(getActivity().getIntent
             ().getExtras().getString("chatTable"));
         for (ChatMessage item : dbMessageList)
@@ -83,7 +77,6 @@ public class ChatActivityFragment extends Fragment implements OnClickListener
             messageEntry.setText("");
             chatMessageAdapter.add(chatMessage);
             chatMessageAdapter.notifyDataSetChanged();
-            //TODO save messages to db
             ContentValues messageValues = new ContentValues();
             messageValues.put(SimpleChatterContract.Chat.COLUMN_MESSAGE_TEXT, message);
             messageValues.put(SimpleChatterContract.Chat.COLUMN_SENDER_ID, 0);

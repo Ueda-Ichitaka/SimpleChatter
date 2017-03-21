@@ -8,6 +8,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
+
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String theme = prefs.getString("pref_theme", "0");
         if (theme.equals("0"))
@@ -69,7 +72,6 @@ public class MainActivity extends AppCompatActivity
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-
     }
 
 
@@ -84,6 +86,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        final SimpleChatterDataWorker dataWorker = new SimpleChatterDataWorker(this);
+
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -95,6 +99,55 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
+        if (id == R.id.action_add_contact)
+        {
+            //TODO implement
+            return true;
+        }
+        if (id == R.id.action_clear_db)
+        {
+            //TODO drop all tables,
+            dataWorker.resetDb(this);
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container);
+            if (currentFragment instanceof ContactsFragment)
+            {
+                FragmentTransaction fragTransaction = getSupportFragmentManager()
+                    .beginTransaction();
+                fragTransaction.detach(currentFragment);
+                fragTransaction.attach(currentFragment);
+                fragTransaction.commit();
+            }
+            Fragment currentFragment2 = getSupportFragmentManager().findFragmentById(R.id
+                .container);
+            if (currentFragment2 instanceof ChatsFragment)
+            {
+                FragmentTransaction fragTransaction2 = getSupportFragmentManager()
+                    .beginTransaction();
+                fragTransaction2.detach(currentFragment2);
+                fragTransaction2.attach(currentFragment2);
+                fragTransaction2.commit();
+            }
+            return true;
+        }
+        if (id == R.id.action_clear_chats)
+        {
+            return true;
+        }
+        if (id == R.id.action_add_demo_contacts)
+        {
+            dataWorker.testData();
+            //TODO refresh fragment
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container);
+            if (currentFragment instanceof ContactsFragment)
+            {
+                FragmentTransaction fragTransaction = getSupportFragmentManager()
+                    .beginTransaction();
+                fragTransaction.detach(currentFragment);
+                fragTransaction.attach(currentFragment);
+                fragTransaction.commit();
+            }
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -102,14 +155,14 @@ public class MainActivity extends AppCompatActivity
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderChatFragment extends Fragment
+    public static class ChatsFragment extends Fragment
     {
 
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
-        public PlaceholderChatFragment()
+        public ChatsFragment()
         {
         }
 
@@ -117,9 +170,9 @@ public class MainActivity extends AppCompatActivity
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderChatFragment newInstance()
+        public static ChatsFragment newInstance()
         {
-            PlaceholderChatFragment fragment = new PlaceholderChatFragment();
+            ChatsFragment fragment = new ChatsFragment();
 
             return fragment;
         }
@@ -127,6 +180,8 @@ public class MainActivity extends AppCompatActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            final SimpleChatterDataWorker dataWorker = new SimpleChatterDataWorker(getContext());
+
             View rootView = inflater.inflate(R.layout.fragment_chats, container, false);
 
             ListView chatsListView = (ListView) rootView.findViewById(R.id.list_chats);
@@ -139,24 +194,29 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                 {
-                    //TODO put chat id in bundle
-                    Intent chat = new Intent(getActivity(), ChatActivity.class);
+                    Intent contact = new Intent(getActivity(), ChatActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString("receiver", chatsListAdapter.getItem(position).getChatName());
-                    chat.putExtras(bundle);
-                    startActivity(chat);
+                    bundle.putString("chatTable", dataWorker.getChatTable(chatsListAdapter
+                        .getItem(position).getId()));
+                    bundle.putString("receiverName", chatsListAdapter.getItem(position)
+                        .getChatName());
+                    bundle.putInt("receiverId", chatsListAdapter.getItem(position).getId());
+                    contact.putExtras(bundle);
+                    startActivity(contact);
                 }
             });
 
-            //TODO replace with load routine. check db table table_chats (chat_id:contact_id)
-            // create new items with data in table table_contacts
-            //for(entries in table table_chats)
-            //chatsListAdapter.add(new ChatsListItem(table_contacts.contact_name(table_chats
-            // .contact_id([chat_id])), table_contacts.contact_id.contact_thumb, chat_id));
 
-            chatsListAdapter.add(new ChatsListItem("Test 1", null, 0));
-            chatsListAdapter.add(new ChatsListItem("Test 2", null, 1));
-            chatsListAdapter.add(new ChatsListItem("Test 3", null, 2));
+            ArrayList<ChatsListItem> dbChatsList = dataWorker.getChatsList();
+            for (ChatsListItem item : dbChatsList)
+            {
+                chatsListAdapter.add(item);
+            }
+
+
+            //chatsListAdapter.add(new ChatsListItem("Test 1", null, 0));
+            //chatsListAdapter.add(new ChatsListItem("Test 2", null, 1));
+            //chatsListAdapter.add(new ChatsListItem("Test 3", null, 2));
             chatsListAdapter.notifyDataSetChanged();
 
 
@@ -167,7 +227,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderContactsFragment extends Fragment
+    public static class ContactsFragment extends Fragment
     {
         /**
          * The fragment argument representing the section number for this
@@ -175,8 +235,7 @@ public class MainActivity extends AppCompatActivity
          */
 
         //private SimpleChatterDataWorker dataWorker;
-
-        public PlaceholderContactsFragment()
+        public ContactsFragment()
         {
         }
 
@@ -184,11 +243,11 @@ public class MainActivity extends AppCompatActivity
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderContactsFragment newInstance()
+        public static ContactsFragment newInstance()
         {
-            PlaceholderContactsFragment fragment = new PlaceholderContactsFragment();
+            ContactsFragment contactFragment = new ContactsFragment();
 
-            return fragment;
+            return contactFragment;
         }
 
         @Override
@@ -210,12 +269,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                 {
-                    //TODO check if entry exists in chats table with contact_id ==
-                    // contactslistitem.id
                     dataWorker.checkChatEntryExists(contactsListAdapter.getItem(position).getId());
-                    //TODO if entry not exist create entry and create chat table
-
-                    //TODO put table_chat in bundle
                     Intent contact = new Intent(getActivity(), ChatActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("chatTable", dataWorker.getChatTable(contactsListAdapter
@@ -228,10 +282,6 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
-            //TODO load contacts from db
-            //TODO add entry in db table_chats with contact_id from table_contacts if not exist
-
-
             //dataWorker.testData();
 
             ArrayList<ContactsListItem> dbContactsList = dataWorker.getContactList();
@@ -240,9 +290,6 @@ public class MainActivity extends AppCompatActivity
                 contactsListAdapter.add(item);
             }
 
-            //contactsListAdapter.add(new ContactsListItem("Test 4", null, 0));
-            //contactsListAdapter.add(new ContactsListItem("Test 5", null, 1));
-            //contactsListAdapter.add(new ContactsListItem("Test 6", null, 2));
             contactsListAdapter.notifyDataSetChanged();
 
             return rootView;
@@ -269,9 +316,9 @@ public class MainActivity extends AppCompatActivity
             switch (position)
             {
                 case 0:
-                    return PlaceholderChatFragment.newInstance();
+                    return ChatsFragment.newInstance();
                 case 1:
-                    return PlaceholderContactsFragment.newInstance();
+                    return ContactsFragment.newInstance();
                 default:
                     return null;
             }

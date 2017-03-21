@@ -70,7 +70,7 @@ public class SimpleChatterDataWorker
         return contacts;
     }
 
-    /*
+
     public ArrayList<ChatsListItem> getChatsList()
     {
         database = dbHelper.getReadableDatabase();
@@ -85,15 +85,15 @@ public class SimpleChatterDataWorker
         ArrayList<ChatsListItem> chats = new ArrayList<ChatsListItem>();
         while (cursor.moveToNext())
         {
-            ChatsListItem item = new ChatsListItem(cursor.getString(cursor
-                .getColumnIndexOrThrow(SimpleChatterContract.Chats.)), null, cursor
-                .getInt(cursor.getColumnIndexOrThrow(SimpleChatterContract.Contact._ID)));
-            chats.add(item);
+            int contact = cursor.getInt(cursor.getColumnIndexOrThrow(SimpleChatterContract.Chats
+                .COLUMN_CONTACT));
+
+            chats.add(getChat(contact));
         }
         cursor.close();
 
         return chats;
-    } */
+    }
 
     public ArrayList<ChatMessage> getMessageList(String tableName)
     {
@@ -172,10 +172,28 @@ public class SimpleChatterDataWorker
         return retVal;
     }
 
+    public ChatsListItem getChat(int id)
+    {
+        ArrayList<ContactsListItem> contacts = getContactList();
 
+        for (ContactsListItem item : contacts)
+        {
+            if (item.getId() == id)
+            {
+                return new ChatsListItem(item.getContactName(), item.getThumb(), item.getId());
+            }
+        }
+
+        return new ChatsListItem("null", null, -1);
+    }
 
     public void createChatTable(int chatID)
     {
         dbHelper.createChatTable(chatID);
+    }
+
+    public void resetDb(Context context)
+    {
+        dbHelper.resetDb(context);
     }
 }

@@ -67,8 +67,7 @@ public class ChatMessageAdapter extends BaseAdapter
         LinearLayout bubble_layout = (LinearLayout) view.findViewById(R.id.bubble_layout);
         LinearLayout bubble_layout_parent = (LinearLayout) view.findViewById(R.id.bubble_layout_parent);
 
-        if (message.getSenderId() == 0)    //        if (message.isMine(prefs.getString
-        // ("pref_account_name", "Anonymous")))
+        if (message.getSenderId() == 0)
         {
             if (prefs.getString("pref_theme", "0").equals("0"))
             {

@@ -21,6 +21,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -108,24 +110,15 @@ public class MainActivity extends AppCompatActivity
         {
             //TODO drop all tables,
             dataWorker.resetDb(this);
-            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container);
-            if (currentFragment instanceof ContactsFragment)
+            List<Fragment> frags = getSupportFragmentManager().getFragments();
+            for(Iterator<Fragment> iter = frags.iterator(); iter.hasNext();)
             {
-                FragmentTransaction fragTransaction = getSupportFragmentManager()
+                Fragment frag = iter.next();
+                FragmentTransaction fragsTransaction = getSupportFragmentManager()
                     .beginTransaction();
-                fragTransaction.detach(currentFragment);
-                fragTransaction.attach(currentFragment);
-                fragTransaction.commit();
-            }
-            Fragment currentFragment2 = getSupportFragmentManager().findFragmentById(R.id
-                .container);
-            if (currentFragment2 instanceof ChatsFragment)
-            {
-                FragmentTransaction fragTransaction2 = getSupportFragmentManager()
-                    .beginTransaction();
-                fragTransaction2.detach(currentFragment2);
-                fragTransaction2.attach(currentFragment2);
-                fragTransaction2.commit();
+                fragsTransaction.detach(frag);
+                fragsTransaction.attach(frag);
+                fragsTransaction.commit();
             }
             return true;
         }
@@ -137,14 +130,16 @@ public class MainActivity extends AppCompatActivity
         {
             dataWorker.testData();
             //TODO refresh fragment
-            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container);
-            if (currentFragment instanceof ContactsFragment)
+
+            List<Fragment> frags = getSupportFragmentManager().getFragments();
+            for(Iterator<Fragment> iter = frags.iterator(); iter.hasNext();)
             {
-                FragmentTransaction fragTransaction = getSupportFragmentManager()
+                Fragment frag = iter.next();
+                FragmentTransaction fragsTransaction = getSupportFragmentManager()
                     .beginTransaction();
-                fragTransaction.detach(currentFragment);
-                fragTransaction.attach(currentFragment);
-                fragTransaction.commit();
+                fragsTransaction.detach(frag);
+                fragsTransaction.attach(frag);
+                fragsTransaction.commit();
             }
             return true;
         }
